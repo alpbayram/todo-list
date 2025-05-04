@@ -1,0 +1,7 @@
+* {
+	outline: 1px solid BLACK;
+}
+body {
+	touch-action: manipulation;
+	
+}
