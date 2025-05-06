@@ -3,5 +3,33 @@
 }
 body {
 	touch-action: manipulation;
-	
+}
+.grid-container {
+	display: grid;
+	width: 100vw;
+	height: 100svh;
+	grid-template-columns: minmax(auto,1fr) 5fr 1fr;
+	grid-template-rows: 50px 1fr;
+}
+.header {
+	grid-column: 1 /4;
+	grid-row: 1/2;
+	background-color: #1b1a19;
+	color: white;
+}
+.left-bar {
+	grid-column: 1/2;
+	grid-row: 2/3;
+	background-color: #252423;
+	color: white;
+}
+.main-content {
+	grid-column: 2/3;
+	grid-row: 2/3;
+	background-color: #11100f;
+}
+.right-bar {
+	grid-column: 3/4;
+	grid-row: 2/3;
+	background-color: #201f1e;
 }
