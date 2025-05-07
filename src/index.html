@@ -9,19 +9,120 @@
 	</head>
 	<body ontouchstart="">
 		<div class="grid-container">
-			<div class="header">TO DO</div>
-			<div class="left-bar">
-				<div class="static-list">
-					<div class="inbox">INBOX</div>
-					<div class="important">IMPORTANT</div>
-					<div class="upcoming">UPCOMING</div>
-					<div class="completed">COMPLETED</div>
+			<div class="header">
+				<div class="hide-left">
+					<button class="hide-left-button">
+						<img src="images/hide-left.svg" alt="" />
+					</button>
 				</div>
-				<div class="sortable-list">
-					<div class="project-1">Project 1</div>
+				<div class="header-item">
+					<div class="icon"><img src="images/task-square-svgrepo-com.svg" alt="" /></div>
+					<p>To Do</p>
 				</div>
 			</div>
-			<div class="main-content"></div>
+			<div class="left-bar" data-state="open">
+				<div class="static-list">
+					<div class="inbox list-item">
+						<div class="icon"><img src="images/inbox-svgrepo-com.svg" alt="" /></div>
+						<p>Inbox</p>
+					</div>
+					<div class="important list-item">
+						<div class="icon">
+							<img src="images/star-sharp-svgrepo-com.svg" alt="" />
+						</div>
+						<p>Important</p>
+					</div>
+					<div class="upcoming list-item">
+						<div class="icon">
+							<img src="images/calendar-1-svgrepo-com.svg" alt="" />
+						</div>
+						<p>Upcoming</p>
+					</div>
+					<div class="completed list-item">
+						<div class="icon">
+							<img src="images/order-completed-svgrepo-com.svg" alt="" />
+						</div>
+						<p>Completed</p>
+					</div>
+				</div>
+				<div class="sortable-list">
+					<div class="project-1 list-item">
+						<div class="icon">
+							<img src="images/list-ul-alt-svgrepo-com.svg" alt="" />
+						</div>
+						<p>Project 1</p>
+					</div>
+					<div class="project-1 list-item">
+						<div class="icon">
+							<img src="images/list-ul-alt-svgrepo-com.svg" alt="" />
+						</div>
+						<p>Project 1</p>
+					</div>
+					<div class="project-1 list-item">
+						<div class="icon">
+							<img src="images/list-ul-alt-svgrepo-com.svg" alt="" />
+						</div>
+						<p>Project 1</p>
+					</div>
+					<div class="project-1 list-item">
+						<div class="icon">
+							<img src="images/list-ul-alt-svgrepo-com.svg" alt="" />
+						</div>
+						<p>Project 1</p>
+					</div>
+					<div class="project-1 list-item">
+						<div class="icon">
+							<img src="images/list-ul-alt-svgrepo-com.svg" alt="" />
+						</div>
+						<p>Project 1</p>
+					</div>
+					<div class="project-1 list-item">
+						<div class="icon">
+							<img src="images/list-ul-alt-svgrepo-com.svg" alt="" />
+						</div>
+						<p>Project 1</p>
+					</div>
+					<div class="project-1 list-item">
+						<div class="icon">
+							<img src="images/list-ul-alt-svgrepo-com.svg" alt="" />
+						</div>
+						<p>Project 1</p>
+					</div>
+					<div class="project-1 list-item">
+						<div class="icon">
+							<img src="images/list-ul-alt-svgrepo-com.svg" alt="" />
+						</div>
+						<p>Project 1</p>
+					</div>
+				</div>
+				<div class="new-list list-item">
+					<div class="icon">
+						<img src="images/plus-large-svgrepo-com.svg" alt="" />
+					</div>
+					<p>New list</p>
+				</div>
+				<div class="hide-left">
+					<button class="hide-left-button">
+						<img src="images/hide-left.svg" alt="" />
+					</button>
+				</div>
+			</div>
+			<div class="main-content">
+				<div class="content-header">
+					<div class="icon"><img src="images/star-sharp-svgrepo-com.svg" alt="" /></div>
+					<p>Important</p>
+					<div class="dropdown"></div>
+				</div>
+				<div class="add-a-task-container">
+					<div class="add-a-task-input"></div>
+					<div class="add-a-task-submit"></div>
+				</div>
+				<div class="content">
+					<div class="task-list-item"></div>
+					<div class="task-list-item"></div>
+					<div class="task-list-item"></div>
+				</div>
+			</div>
 			<div class="right-bar"></div>
 		</div>
 	</body>

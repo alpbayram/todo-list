@@ -1,0 +1,10 @@
+.content-header {
+    display: flex;
+    color: white;
+	& .icon {
+		height: 2rem;
+		& img {
+			max-height: 100%;
+		}
+	}
+}
