@@ -32,6 +32,7 @@ body {
 	grid-column: 2/3;
 	grid-row: 2/3;
 	background-color: #11100f;
+	overflow: auto;
 }
 .right-bar {
 	grid-column: 3/4;
