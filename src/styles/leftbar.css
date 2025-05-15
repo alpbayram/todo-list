@@ -80,12 +80,13 @@
         margin-top: 16px;
     }
 }
-.sortable-list {
+.project-list {
 	position: relative;
 	margin-top: 18px;
 	overflow: scroll;
 }
 .list-item {
+	
 	padding: 12px 24px;
 	display: flex;
 	font-size: 1rem;
@@ -98,11 +99,25 @@
 	}
 	& p {
 		margin-left: 16px;
-		font-weight: 400;
+		
 	}
 	&:hover {
 		background-color: #323130;
 		cursor: pointer;
+	}
+	&.selected{
+		position: relative;
+		background-color: #3b3a39;
+		font-weight: bold;
+		&::before{
+			position: absolute;
+			content: "";
+			width: 2px;
+			height: 100%;
+			background-color: #296fe6;
+			left: 0;
+			top: 0;
+		}
 	}
 }
 .new-list {

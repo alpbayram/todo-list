@@ -134,21 +134,45 @@
 		padding-top: 10px;
 		padding-bottom: 10px;
 		align-items: center;
-		
-		& .item-text-container{
+		& label {
+			display: flex;
+			width: 100%;
+			height: 100%;
+			
+		}
+		& .checkbox {
+			appearance: none;
+			display: flex;
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			&:checked + label {
+				background-image: url("../images/checked.svg");
+			}
+			&:not(:checked) + label{
+				background-image: url("../images/unchecked.svg");
+			}
+			&:not(:checked):hover + label{
+				background-image: url("../images/unchecked-hover.svg");
+			}
+			
+		}
+		& .item-text-container {
 			margin-left: 12px;
-			& .project-name{
+			& .project-name {
 				color: #a5a3a1;
 			}
 		}
 	}
-	& .icon{
-		
+	& .icon {
+		position: relative;
+		aspect-ratio: 1;
 	}
-	& .important{
+	& .important {
 		margin-left: auto;
 	}
-	& .icon, .important {
+	& .icon,
+	.important {
 		height: 1.3125rem;
 		flex-shrink: 0;
 
