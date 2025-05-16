@@ -9,6 +9,7 @@ export class Projects {
 	}
 }
 const Inbox = new Projects("Inbox", true, []);
+const Inbox2 = new Projects("123Inbox", true, []);
 
 export class Todo {
 	constructor(title, note, dueDate, important, stepArray, project) {
