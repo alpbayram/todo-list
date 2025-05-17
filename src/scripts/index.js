@@ -6,7 +6,7 @@ import "../styles/header.css";
 import "../styles/content.css";
 import checked from "../images/checked.svg";
 import { Projects, Todo } from "./model.js";
-import { renderInbox, renderListItem } from "./inbox.js";
+import { renderImportant, renderInbox, renderListItem } from "./inbox.js";
 import { renderProjectList, renderProjectListItem } from "./leftbar.js";
 import { formatISO } from "date-fns";
 import { parseISO } from "date-fns";
@@ -14,9 +14,15 @@ import { parseISO } from "date-fns";
 renderInbox(Projects.projectList[0].id);
 renderProjectList();
 const inbox = document.querySelector(".inbox");
+const important = document.querySelector(".important");
+const upcoming = document.querySelector(".upcoming");
+const completed = document.querySelector(".completed");
 const leftBar = document.querySelector(".left-bar");
 
 inbox.dataset.id = Projects.projectList[0].id;
+important.dataset.id = Projects.projectList[0].id;
+upcoming.dataset.id = Projects.projectList[0].id;
+completed.dataset.id = Projects.projectList[0].id;
 document.addEventListener("click", domControl);
 document.addEventListener("keyup", inputControl);
 
@@ -27,15 +33,23 @@ function domControl(event) {
 			? (leftBar.dataset.state = "close")
 			: (leftBar.dataset.state = "open");
 	} else if (event.target.matches(".menu-button")) {
-		const projectIndex = Projects.projectList.findIndex(function (item) {
-			if (item.id == event.target.closest("[data-id]").dataset.id) {
-				console.log(item);
-				return item;
+		if (event.target.classList.contains("important")) {
+			renderImportant(event.target.closest("[data-id]").dataset.id,"important");
+		} else if (event.target.classList.contains("upcoming")) {
+			renderImportant(event.target.closest("[data-id]").dataset.id,"upcoming");
+		} else if (event.target.classList.contains("completed")) {
+			renderImportant(event.target.closest("[data-id]").dataset.id,"completed");
+		} else {
+			const projectIndex = Projects.projectList.findIndex(function (item) {
+				if (item.id == event.target.closest("[data-id]").dataset.id) {
+					console.log(item);
+					return item;
+				}
+			});
+			if (event.target.dataset.id == Projects.projectList[projectIndex].id) {
+				renderInbox(event.target.dataset.id);
+				console.log(event.target.dataset.id);
 			}
-		});
-		if (event.target.dataset.id == Projects.projectList[projectIndex].id) {
-			renderInbox(event.target.dataset.id);
-			console.log(event.target.dataset.id);
 		}
 
 		if (!event.target.classList.contains("selected")) {
@@ -54,15 +68,24 @@ function domControl(event) {
 				return item;
 			}
 		});
-
 		const dateInput = document.querySelector(".date-input");
 		const dateInputValue = dateInput.value == "" ? null : dateInput.value;
-
-		console.log(Projects.projectList);
-		new Todo(inputText.value, null, dateInputValue, false, [], Projects.projectList[projectIndex]);
+		const importantState =
+			document.querySelector(".selected").classList.contains("important") == true
+				? true
+				: false;
+		console.log(importantState);
+		new Todo(
+			inputText.value,
+			null,
+			dateInputValue,
+			importantState,
+			[],
+			Projects.projectList[projectIndex]
+		);
 		renderListItem(Projects.projectList[projectIndex].tasks.at(-1));
 		inputText.value = "";
-		dateInput.value=""
+		dateInput.value = "";
 	} else if (event.target.matches(".checkbox") || event.target.matches(".important-checkbox")) {
 		const projectIndex = Projects.projectList.findIndex(function (item) {
 			if (item.id == event.target.closest("[data-id]").dataset.id) {
@@ -91,7 +114,6 @@ function domControl(event) {
 	} else if (event.target.matches(".new-list")) {
 		console.log("girdi");
 	} else if (event.target.matches(".date-input")) {
-		
 		// const result = parseISO(dateInputValue);
 		// const result2= formatISO(result, { representation: 'date' })
 		// console.log(result)

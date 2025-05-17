@@ -1,11 +1,16 @@
 import inboxIcon from "../images/inbox-svgrepo-com.svg";
 import projectIcon from "../images/list-ul-alt-svgrepo-com.svg";
-import unchecked from "../images/unchecked.svg";
-import important from "../images/header-important.svg";
+import importantIcon from "../images/header-important.svg";
+import upcomingIcon from "../images/calendar-1-svgrepo-com.svg";
+import completedIcon from "../images/order-completed-svgrepo-com.svg";
+
 import { Projects, Todo } from "./model.js";
 import { formatISO } from "date-fns";
 import { isToday } from "date-fns";
 import { parseISO } from "date-fns";
+import { isTomorrow } from "date-fns";
+import { addMonths } from "date-fns";
+import { isWithinInterval } from "date-fns";
 export function renderInbox(projectId) {
 	const projectIndex = Projects.projectList.findIndex(function (item) {
 		if (item.id == projectId) {
@@ -32,6 +37,53 @@ export function renderInbox(projectId) {
 
 	Projects.projectList[projectIndex].tasks.forEach((item) => {
 		renderListItem(item);
+	});
+}
+export function renderImportant(projectId, state) {
+	const mainContent = document.querySelector(".main-content");
+	mainContent.dataset.id = projectId;
+	const contentHeader = document.querySelector(".content-header");
+	const content = document.querySelector(".content");
+	const headerIconImg = contentHeader.querySelector("img");
+	const headerText = contentHeader.querySelector("p");
+
+	headerIconImg.setAttribute("src", importantIcon);
+	headerText.textContent = "Important";
+
+	const today = formatISO(new Date(), { representation: "date" });
+	const dateInput = document.querySelector(".date-input");
+	dateInput.setAttribute("min", today);
+
+	while (content.firstChild) {
+		content.removeChild(content.firstChild);
+	}
+
+	Projects.projectList.forEach((itemProject) => {
+		itemProject.tasks.forEach((itemTask) => {
+			if (state == "important") {
+				if (itemTask.important == true) {
+					renderListItem(itemTask);
+				}
+			} else if (state == "upcoming") {
+				const addOneMonths = addMonths(new Date(), 1);
+
+				if (itemTask.dueDate != null) {
+					const dueDate = parseISO(itemTask.dueDate);
+					if (
+						isWithinInterval(dueDate, {
+							start: new Date(),
+							end: addOneMonths,
+						})
+					) {
+						renderListItem(itemTask);
+					}
+				}
+			} else if (state == "completed") {
+				if (itemTask.completed == true) {
+					renderListItem(itemTask);
+				}
+			}
+		});
 	});
 }
 
@@ -72,6 +124,8 @@ export function renderListItem(listItem) {
 		const result = parseISO(listItem.dueDate);
 		if (isToday(result)) {
 			projectDetailArray.push("Bugün");
+		} else if (isTomorrow(result)) {
+			projectDetailArray.push("Yarın");
 		} else {
 			projectDetailArray.push(listItem.dueDate);
 		}
