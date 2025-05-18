@@ -3,7 +3,7 @@ import projectIcon from "../images/list-ul-alt-svgrepo-com.svg";
 import importantIcon from "../images/header-important.svg";
 import upcomingIcon from "../images/calendar-1-svgrepo-com.svg";
 import completedIcon from "../images/order-completed-svgrepo-com.svg";
-
+import groupIcon from "../images/chevron-right.svg";
 import { Projects, Todo } from "./model.js";
 import { formatISO } from "date-fns";
 import { isToday } from "date-fns";
@@ -87,6 +87,29 @@ export function renderImportant(projectId, state) {
 	});
 }
 
+export function renderListGroup() {
+	const isProjectHasTask = Projects.projectList.forEach(function (item) {
+		if (item.tasks != null) {
+			return item;
+		}
+	});
+	const content = document.querySelector(".content");
+	const taskListGroup = document.createElement("div");
+	taskListGroup.classList.add("task-list-group", "collapsed");
+	taskListGroup.dataset.loaded = false;
+	const taskListGroupIcon = document.createElement("div");
+	taskListGroupIcon.classList.add("icon");
+	taskListGroup.appendChild(taskListGroupIcon);
+	const taskListGroupIconImg = document.createElement("img");
+	taskListGroupIconImg.setAttribute("src", groupIcon);
+	taskListGroupIcon.appendChild(taskListGroupIconImg);
+	const taskListGroupTextContainer = document.createElement("div");
+	taskListGroupTextContainer.classList.add("group-text-container");
+	const taskListGroupTextContainerP1 = document.createElement("p");
+	const taskListGroupTextContainerP2 = document.createElement("p");
+
+	taskListGroupTextContainerP1.textContent = null;
+}
 export function renderListItem(listItem) {
 	const content = document.querySelector(".content");
 	const taskListItem = document.createElement("div");

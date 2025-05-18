@@ -11,7 +11,7 @@ import { renderProjectList, renderProjectListItem } from "./leftbar.js";
 import { formatISO } from "date-fns";
 import { parseISO } from "date-fns";
 ("./inbox.js");
-renderInbox(Projects.projectList[0].id);
+// renderInbox(Projects.projectList[0].id);
 renderProjectList();
 const inbox = document.querySelector(".inbox");
 const important = document.querySelector(".important");
@@ -34,11 +34,11 @@ function domControl(event) {
 			: (leftBar.dataset.state = "open");
 	} else if (event.target.matches(".menu-button")) {
 		if (event.target.classList.contains("important")) {
-			renderImportant(event.target.closest("[data-id]").dataset.id,"important");
+			renderImportant(event.target.closest("[data-id]").dataset.id, "important");
 		} else if (event.target.classList.contains("upcoming")) {
-			renderImportant(event.target.closest("[data-id]").dataset.id,"upcoming");
+			renderImportant(event.target.closest("[data-id]").dataset.id, "upcoming");
 		} else if (event.target.classList.contains("completed")) {
-			renderImportant(event.target.closest("[data-id]").dataset.id,"completed");
+			renderImportant(event.target.closest("[data-id]").dataset.id, "completed");
 		} else {
 			const projectIndex = Projects.projectList.findIndex(function (item) {
 				if (item.id == event.target.closest("[data-id]").dataset.id) {
