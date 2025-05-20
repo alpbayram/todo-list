@@ -2243,7 +2243,7 @@ function renderProjectListItem(listItem) {
 
 
 ("./inbox.js");
-// renderProjectTasks(Projects.projectList[0].id);
+renderProjectTasks(Projects.projectList[0].id);
 renderProjectList();
 const inbox = document.querySelector(".inbox");
 const important = document.querySelector(".important");
