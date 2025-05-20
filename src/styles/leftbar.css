@@ -84,11 +84,15 @@
 	position: relative;
 	margin-top: 18px;
 	overflow: scroll;
+	
 }
 .list-item {
 	padding: 12px 24px;
 	display: flex;
 	font-size: 1rem;
+	&:not(.new-list) > *{
+		pointer-events: none;
+	}
 	& .icon {
 		height: 1.5rem;
 		& img {
@@ -133,6 +137,9 @@
 
 		&::placeholder {
 			color: #78bafd;
+		}
+		&:focus::placeholder{
+			color: #797775 ;
 		}
 	}
 }

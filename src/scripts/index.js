@@ -6,25 +6,33 @@ import "../styles/header.css";
 import "../styles/content.css";
 import checked from "../images/checked.svg";
 import { Projects, Todo } from "./model.js";
-import { renderImportant, renderInbox, renderListItem } from "./inbox.js";
+import {
+	renderSortedProjects,
+	renderProjectTasks,
+	renderListItem,
+	renderGroupProjectTasks,
+} from "./inbox.js";
 import { renderProjectList, renderProjectListItem } from "./leftbar.js";
 import { formatISO } from "date-fns";
 import { parseISO } from "date-fns";
 ("./inbox.js");
-// renderInbox(Projects.projectList[0].id);
+// renderProjectTasks(Projects.projectList[0].id);
 renderProjectList();
 const inbox = document.querySelector(".inbox");
 const important = document.querySelector(".important");
 const upcoming = document.querySelector(".upcoming");
 const completed = document.querySelector(".completed");
 const leftBar = document.querySelector(".left-bar");
-
+const newInputButton = document.querySelector(".new-list img");
+const newInput = document.querySelector(".new-list input");
+const addATaskInputWrapper = document.querySelector(".add-a-task-input-wrapper");
+const addATaskInput = document.querySelector(".add-a-task-input");
 inbox.dataset.id = Projects.projectList[0].id;
 important.dataset.id = Projects.projectList[0].id;
 upcoming.dataset.id = Projects.projectList[0].id;
 completed.dataset.id = Projects.projectList[0].id;
 document.addEventListener("click", domControl);
-document.addEventListener("keyup", inputControl);
+document.addEventListener("keyup", domControl);
 
 function domControl(event) {
 	console.log(event.target);
@@ -34,24 +42,14 @@ function domControl(event) {
 			: (leftBar.dataset.state = "open");
 	} else if (event.target.matches(".menu-button")) {
 		if (event.target.classList.contains("important")) {
-			renderImportant(event.target.closest("[data-id]").dataset.id, "important");
+			renderSortedProjects(event.target.closest("[data-id]").dataset.id, "important");
 		} else if (event.target.classList.contains("upcoming")) {
-			renderImportant(event.target.closest("[data-id]").dataset.id, "upcoming");
+			renderSortedProjects(event.target.closest("[data-id]").dataset.id, "upcoming");
 		} else if (event.target.classList.contains("completed")) {
-			renderImportant(event.target.closest("[data-id]").dataset.id, "completed");
+			renderSortedProjects(event.target.closest("[data-id]").dataset.id, "completed");
 		} else {
-			const projectIndex = Projects.projectList.findIndex(function (item) {
-				if (item.id == event.target.closest("[data-id]").dataset.id) {
-					console.log(item);
-					return item;
-				}
-			});
-			if (event.target.dataset.id == Projects.projectList[projectIndex].id) {
-				renderInbox(event.target.dataset.id);
-				console.log(event.target.dataset.id);
-			}
+			renderProjectTasks(event.target.dataset.id);
 		}
-
 		if (!event.target.classList.contains("selected")) {
 			const menuButtons = document.querySelectorAll(".menu-button");
 			menuButtons.forEach(function (item, index) {
@@ -60,7 +58,10 @@ function domControl(event) {
 			event.target.classList.add("selected");
 		}
 		console.log(Projects.projectList);
-	} else if (event.target.matches(".add-a-task-button")) {
+	} else if (
+		event.target.matches(".add-a-task-button") ||
+		(event.key === "Enter" && event.target.matches(".add-a-task-input"))
+	) {
 		const inputText = document.querySelector(".add-a-task-input");
 		const projectIndex = Projects.projectList.findIndex(function (item) {
 			if (item.id == event.target.closest("[data-id]").dataset.id) {
@@ -75,41 +76,38 @@ function domControl(event) {
 				? true
 				: false;
 		console.log(importantState);
-		new Todo(
-			inputText.value,
-			null,
-			dateInputValue,
-			importantState,
-			[],
-			Projects.projectList[projectIndex]
-		);
+		new Todo(inputText.value, null, dateInputValue, importantState, [], projectIndex);
 		renderListItem(Projects.projectList[projectIndex].tasks.at(-1));
 		inputText.value = "";
 		dateInput.value = "";
 	} else if (event.target.matches(".checkbox") || event.target.matches(".important-checkbox")) {
-		const projectIndex = Projects.projectList.findIndex(function (item) {
-			if (item.id == event.target.closest("[data-id]").dataset.id) {
-				// console.log(item);
-				return item;
+		const indexes = (function index() {
+			for (const project of Projects.projectList) {
+				for (const task of project.tasks) {
+					if (task.id == event.target.closest("[data-list-id]").dataset.listId) {
+						return {
+							taskIndex: project.tasks.indexOf(task),
+							projectIndex: Projects.projectList.indexOf(project),
+						};
+					}
+				}
 			}
-		});
-		const taskIndex = Projects.projectList[projectIndex].tasks.findIndex(function (item) {
-			if (item.id == event.target.closest("[data-list-id]").dataset.listId) {
-				// console.log(item);
-				return item;
-			}
-		});
+		})();
+
+		console.log(indexes);
+
 		console.log(event.target.checked);
 		if (event.target.checked && event.target.matches(".checkbox")) {
-			Projects.projectList[projectIndex].tasks[taskIndex].completed = true;
+			Projects.projectList[indexes.projectIndex].tasks[indexes.taskIndex].completed = true;
 			console.log(Projects.projectList);
 		} else if (!event.target.checked && event.target.matches(".checkbox")) {
-			Projects.projectList[projectIndex].tasks[taskIndex].completed = false;
+			Projects.projectList[indexes.projectIndex].tasks[indexes.taskIndex].completed = false;
 			console.log(Projects.projectList);
 		} else if (event.target.checked && event.target.matches(".important-checkbox")) {
-			Projects.projectList[projectIndex].tasks[taskIndex].important = true;
+			console.log("kontrol kontrol");
+			Projects.projectList[indexes.projectIndex].tasks[indexes.taskIndex].important = true;
 		} else {
-			Projects.projectList[projectIndex].tasks[taskIndex].important = false;
+			Projects.projectList[indexes.projectIndex].tasks[indexes.taskIndex].important = false;
 		}
 	} else if (event.target.matches(".new-list")) {
 		console.log("girdi");
@@ -118,17 +116,56 @@ function domControl(event) {
 		// const result2= formatISO(result, { representation: 'date' })
 		// console.log(result)
 		// console.log(result2)
-	}
-}
-
-function inputControl(event) {
-	console.log(event.target + "budur");
-	if (event.key === "Enter" && event.target.matches(".new-project-input")) {
+	} else if (event.target.matches(".task-list-group")) {
+		event.target.classList.toggle("collapsed");
+		if (
+			!event.target.classList.contains("collapsed") &&
+			event.target.dataset.loaded == "false"
+		) {
+			renderGroupProjectTasks(
+				event.target.closest("[data-id]").dataset.id,
+				event.target.closest("[data-view]").dataset.view
+			);
+			console.log(event.target.closest("[data-view]").dataset.view);
+			event.target.dataset.loaded = "true";
+		} else if (event.target.classList.contains("collapsed")) {
+			const projectIndex = Projects.projectList.findIndex(function (item) {
+				if (item.id == event.target.closest("[data-id]").dataset.id) {
+					// console.log(item);
+					return item;
+				}
+			});
+			Projects.projectList[projectIndex].tasks.forEach(function (item) {
+				const listItem = document.querySelector(`[data-list-id="${item.id}"]`);
+				listItem.style.display = "none";
+			});
+		} else {
+			const projectIndex = Projects.projectList.findIndex(function (item) {
+				if (item.id == event.target.closest("[data-id]").dataset.id) {
+					// console.log(item);
+					return item;
+				}
+			});
+			Projects.projectList[projectIndex].tasks.forEach(function (item) {
+				const listItem = document.querySelector(`[data-list-id="${item.id}"]`);
+				listItem.style.display = "flex";
+			});
+		}
+	} else if (event.target == newInputButton) {
+		newInput.focus();
+	} else if (event.target == addATaskInputWrapper) {
+		addATaskInput.focus();
+	} else if (event.key === "Enter" && event.target.matches(".new-project-input")) {
 		const title = event.target.value;
 		new Projects(title, false, []);
 		event.target.value = "";
 		renderProjectListItem(Projects.projectList.at(-1));
 		console.log(Projects.projectList);
+	}
+}
+
+function inputControl(event) {
+	if (event.key === "Enter" && event.target.matches(".new-project-input")) {
 	}
 }
 console.log(Projects.projectList);
