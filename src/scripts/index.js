@@ -16,7 +16,7 @@ import { renderProjectList, renderProjectListItem } from "./leftbar.js";
 import { formatISO } from "date-fns";
 import { parseISO } from "date-fns";
 ("./inbox.js");
-// renderProjectTasks(Projects.projectList[0].id);
+renderProjectTasks(Projects.projectList[0].id);
 renderProjectList();
 const inbox = document.querySelector(".inbox");
 const important = document.querySelector(".important");
