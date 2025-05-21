@@ -11,10 +11,10 @@ import {
 	renderProjectTasks,
 	renderListItem,
 	renderGroupProjectTasks,
+	renderListGroup,
 } from "./inbox.js";
 import { renderProjectList, renderProjectListItem } from "./leftbar.js";
-import { formatISO } from "date-fns";
-import { parseISO } from "date-fns";
+
 ("./inbox.js");
 renderProjectTasks(Projects.projectList[0].id);
 renderProjectList();
@@ -27,13 +27,15 @@ const newInputButton = document.querySelector(".new-list img");
 const newInput = document.querySelector(".new-list input");
 const addATaskInputWrapper = document.querySelector(".add-a-task-input-wrapper");
 const addATaskInput = document.querySelector(".add-a-task-input");
+const newProjectInput = document.querySelector(".new-project-input");
+const dateInputP = document.querySelector(".add-a-task-submit-wrapper p");
 inbox.dataset.id = Projects.projectList[0].id;
 important.dataset.id = Projects.projectList[0].id;
 upcoming.dataset.id = Projects.projectList[0].id;
 completed.dataset.id = Projects.projectList[0].id;
 document.addEventListener("click", domControl);
 document.addEventListener("keyup", domControl);
-
+const dateIcon = document.querySelector(".add-a-task-submit-wrapper img");
 function domControl(event) {
 	console.log(event.target);
 	if (event.target.matches(".hide-left-button")) {
@@ -70,16 +72,65 @@ function domControl(event) {
 			}
 		});
 		const dateInput = document.querySelector(".date-input");
-		const dateInputValue = dateInput.value == "" ? null : dateInput.value;
-		const importantState =
-			document.querySelector(".selected").classList.contains("important") == true
-				? true
-				: false;
-		console.log(importantState);
-		new Todo(inputText.value, null, dateInputValue, importantState, [], projectIndex);
-		renderListItem(Projects.projectList[projectIndex].tasks.at(-1));
-		inputText.value = "";
-		dateInput.value = "";
+
+		const dataView = event.target.closest("[data-view]");
+		const dataViewState = dataView ? dataView.dataset.view : null;
+		const dateInputValue = dateInput.value !== "" ? dateInput.value : null;
+
+		if (dataViewState == "important") {
+			if (!inputText.checkValidity()) {
+				inputText.reportValidity();
+			} else {
+				new Todo(inputText.value, null, dateInputValue, true, [], projectIndex, false);
+				// renderListItem(Projects.projectList[projectIndex].tasks.at(-1));
+				renderListGroup(Projects.projectList[projectIndex],dataViewState)
+				inputText.value = "";
+				dateInput.value = "";
+				dateInputP.textContent = "";
+			}
+		} else if (dataViewState == "upcoming") {
+			if (!inputText.checkValidity() || !dateInput.checkValidity()) {
+				if (dateInput.validity.rangeOverflow) {
+					dateInput.setCustomValidity("Bir ay içinde bir tarih seçmelisinz.");
+				} else if (dateInput.validity.rangeUnderflow) {
+					dateInput.setCustomValidity("Gelecek bir tarih seçmelisiniz.");
+				} else if (dateInput.validity.valueMissing) {
+					dateInput.setCustomValidity("Tarih seçmelisiniz.");
+				} else {
+					dateInput.setCustomValidity("");
+				}
+				dateInput.reportValidity();
+				inputText.reportValidity();
+			} else {
+				new Todo(inputText.value, null, dateInputValue, false, [], projectIndex, false);
+				// renderListItem(Projects.projectList[projectIndex].tasks.at(-1));
+				renderListGroup(Projects.projectList[projectIndex],dataViewState)
+				inputText.value = "";
+				dateInput.value = "";
+				dateInputP.textContent = "";
+			}
+		} else if (dataViewState == "completed") {
+			if (!inputText.checkValidity()) {
+				inputText.reportValidity();
+			} else {
+				new Todo(inputText.value, null, dateInputValue, false, [], projectIndex, true);
+				// renderListItem(Projects.projectList[projectIndex].tasks.at(-1));
+				renderListGroup(Projects.projectList[projectIndex],dataViewState)
+				inputText.value = "";
+				dateInput.value = "";
+				dateInputP.textContent = "";
+			}
+		} else {
+			if (!inputText.checkValidity()) {
+				inputText.reportValidity();
+			} else {
+				new Todo(inputText.value, null, dateInputValue, false, [], projectIndex, false);
+				renderListItem(Projects.projectList[projectIndex].tasks.at(-1));
+				inputText.value = "";
+				dateInput.value = "";
+				dateInputP.textContent = "";
+			}
+		}
 	} else if (event.target.matches(".checkbox") || event.target.matches(".important-checkbox")) {
 		const indexes = (function index() {
 			for (const project of Projects.projectList) {
@@ -124,48 +175,50 @@ function domControl(event) {
 		) {
 			renderGroupProjectTasks(
 				event.target.closest("[data-id]").dataset.id,
-				event.target.closest("[data-view]").dataset.view
+				event.target.closest("[data-view]").dataset.view,
+				false,
+				false
 			);
-			console.log(event.target.closest("[data-view]").dataset.view);
+
 			event.target.dataset.loaded = "true";
 		} else if (event.target.classList.contains("collapsed")) {
-			const projectIndex = Projects.projectList.findIndex(function (item) {
-				if (item.id == event.target.closest("[data-id]").dataset.id) {
-					// console.log(item);
-					return item;
-				}
-			});
-			Projects.projectList[projectIndex].tasks.forEach(function (item) {
-				const listItem = document.querySelector(`[data-list-id="${item.id}"]`);
-				listItem.style.display = "none";
-			});
+			renderGroupProjectTasks(
+				event.target.closest("[data-id]").dataset.id,
+				event.target.closest("[data-view]").dataset.view,
+				true,
+				true
+			);
 		} else {
-			const projectIndex = Projects.projectList.findIndex(function (item) {
-				if (item.id == event.target.closest("[data-id]").dataset.id) {
-					// console.log(item);
-					return item;
-				}
-			});
-			Projects.projectList[projectIndex].tasks.forEach(function (item) {
-				const listItem = document.querySelector(`[data-list-id="${item.id}"]`);
-				listItem.style.display = "flex";
-			});
+			renderGroupProjectTasks(
+				event.target.closest("[data-id]").dataset.id,
+				event.target.closest("[data-view]").dataset.view,
+				false,
+				true
+			);
 		}
 	} else if (event.target == newInputButton) {
 		newInput.focus();
 	} else if (event.target == addATaskInputWrapper) {
 		addATaskInput.focus();
 	} else if (event.key === "Enter" && event.target.matches(".new-project-input")) {
-		const title = event.target.value;
-		new Projects(title, false, []);
-		event.target.value = "";
-		renderProjectListItem(Projects.projectList.at(-1));
-		console.log(Projects.projectList);
-	}
-}
+		if (!newProjectInput.checkValidity()) {
+			newProjectInput.reportValidity();
+		} else {
+			const title = event.target.value;
+			new Projects(title, false, []);
+			event.target.value = "";
+			renderProjectListItem(Projects.projectList.at(-1));
+			console.log(Projects.projectList);
+		}
+	} else if (event.target == dateIcon) {
+		const dateInput = document.querySelector(".date-input");
+		console.log(dateIcon);
 
-function inputControl(event) {
-	if (event.key === "Enter" && event.target.matches(".new-project-input")) {
+		dateInput.showPicker();
 	}
 }
+const dateInput = document.querySelector(".date-input");
+dateInput.addEventListener("change", function () {
+	dateInputP.textContent = dateInput.value;
+});
 console.log(Projects.projectList);

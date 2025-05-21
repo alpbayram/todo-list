@@ -4,7 +4,7 @@ import importantIcon from "../images/header-important.svg";
 import upcomingIcon from "../images/header-calendar.svg";
 import completedIcon from "../images/header-completed.svg";
 import groupIcon from "../images/chevron-right.svg";
-import headerGroupIcon from "../images/header-list.svg"
+import headerGroupIcon from "../images/header-list.svg";
 import { Projects, Todo } from "./model.js";
 import { formatISO } from "date-fns";
 import { isToday } from "date-fns";
@@ -32,7 +32,7 @@ export function renderProjectTasks(projectId) {
 	const today = formatISO(new Date(), { representation: "date" });
 	const dateInput = document.querySelector(".date-input");
 	dateInput.setAttribute("min", today);
-
+	dateInput.removeAttribute("max");
 	while (content.firstChild) {
 		content.removeChild(content.firstChild);
 	}
@@ -49,20 +49,24 @@ export function renderSortedProjects(projectId, state) {
 	const content = document.querySelector(".content");
 	const headerIconImg = contentHeader.querySelector("img");
 	const headerText = contentHeader.querySelector("p");
-
+	const dateInput = document.querySelector(".date-input");
 	if (state == "important") {
 		headerIconImg.setAttribute("src", importantIcon);
 		headerText.textContent = "Important";
+		dateInput.removeAttribute("max");
 	} else if (state == "upcoming") {
 		headerIconImg.setAttribute("src", upcomingIcon);
 		headerText.textContent = "Upcoming";
+		const addOneMonths = formatISO(addMonths(new Date(), 1), { representation: "date" });
+		dateInput.setAttribute("max", addOneMonths);
 	} else if (state == "completed") {
 		headerIconImg.setAttribute("src", completedIcon);
 		headerText.textContent = "Completed";
+		dateInput.removeAttribute("max");
 	}
 
 	const today = formatISO(new Date(), { representation: "date" });
-	const dateInput = document.querySelector(".date-input");
+
 	dateInput.setAttribute("min", today);
 
 	while (content.firstChild) {
@@ -96,36 +100,104 @@ export function renderSortedProjects(projectId, state) {
 			}
 		});
 		if (isAvailable) {
-			renderListGroup(itemProject);
+			renderListGroup(itemProject, state);
 		}
 	});
 }
-export function renderGroupProjectTasks(projectId, state) {
-	
+export function renderGroupProjectTasks(projectId, state, collapsed, loaded) {
 	Projects.projectList.forEach((itemProject) => {
 		itemProject.tasks.forEach((itemTask) => {
 			if (state == "important") {
-				
-				if (itemTask.important == true && projectId == itemProject.id) {
+				if (
+					itemTask.important == true &&
+					projectId == itemProject.id &&
+					collapsed == false &&
+					loaded == false
+				) {
 					renderListItem(itemTask);
+				} else if (
+					itemTask.important == true &&
+					projectId == itemProject.id &&
+					loaded == true &&
+					collapsed == true
+				) {
+					const element = document.querySelector(`[data-list-id="${itemTask.id}"]`);
+					console.log(element);
+					element.style.display = "none";
+				} else if (
+					itemTask.important == true &&
+					projectId == itemProject.id &&
+					loaded == true &&
+					collapsed == false
+				) {
+					const element = document.querySelector(`[data-list-id="${itemTask.id}"]`);
+					element.style.display = "flex";
 				}
 			} else if (state == "upcoming") {
 				const addOneMonths = addMonths(new Date(), 1);
-
-				if (itemTask.dueDate != null && projectId == itemProject.id) {
-					const dueDate = parseISO(itemTask.dueDate);
-					if (
-						isWithinInterval(dueDate, {
-							start: new Date(),
-							end: addOneMonths,
-						})
-					) {
-						renderListItem(itemTask);
-					}
+				const dueDate = itemTask.dueDate != null ? parseISO(itemTask.dueDate) : null;
+				if (
+					itemTask.dueDate != null &&
+					projectId == itemProject.id &&
+					isWithinInterval(dueDate, {
+						start: new Date(),
+						end: addOneMonths,
+					}) &&
+					loaded == false &&
+					collapsed == false
+				) {
+					renderListItem(itemTask);
+				} else if (
+					itemTask.dueDate != null &&
+					projectId == itemProject.id &&
+					isWithinInterval(dueDate, {
+						start: new Date(),
+						end: addOneMonths,
+					}) &&
+					loaded == true &&
+					collapsed == true
+				) {
+					const element = document.querySelector(`[data-list-id="${itemTask.id}"]`);
+					console.log(element);
+					element.style.display = "none";
+				} else if (
+					itemTask.dueDate != null &&
+					projectId == itemProject.id &&
+					isWithinInterval(dueDate, {
+						start: new Date(),
+						end: addOneMonths,
+					}) &&
+					loaded == true &&
+					collapsed == false
+				) {
+					const element = document.querySelector(`[data-list-id="${itemTask.id}"]`);
+					element.style.display = "flex";
 				}
 			} else if (state == "completed") {
-				if (itemTask.completed == true && projectId == itemProject.id) {
+				if (
+					itemTask.completed == true &&
+					projectId == itemProject.id &&
+					loaded == false &&
+					collapsed == false
+				) {
 					renderListItem(itemTask);
+				} else if (
+					itemTask.completed == true &&
+					projectId == itemProject.id &&
+					loaded == true &&
+					collapsed == true
+				) {
+					const element = document.querySelector(`[data-list-id="${itemTask.id}"]`);
+					console.log(element);
+					element.style.display = "none";
+				} else if (
+					itemTask.completed == true &&
+					projectId == itemProject.id &&
+					loaded == true &&
+					collapsed == false
+				) {
+					const element = document.querySelector(`[data-list-id="${itemTask.id}"]`);
+					element.style.display = "flex";
 				}
 			}
 		});
@@ -150,7 +222,38 @@ export function renderListGroup(groupItem, state) {
 	const taskListGroupTextContainerP2 = document.createElement("p");
 
 	taskListGroupTextContainerP1.textContent = groupItem.title;
-	taskListGroupTextContainerP2.textContent = groupItem.tasks.length;
+
+	const availableTaskCount = Projects.projectList.reduce(function (acc, projectItem) {
+		const count = projectItem.tasks.filter(function (itemTask) {
+			if (groupItem.id == projectItem.id) {
+				if (state == "important") {
+					if (itemTask.important == true) {
+						console.log("deneme41");
+						return itemTask;
+					}
+				} else if (state == "upcoming") {
+					const addOneMonths = addMonths(new Date(), 1);
+					const dueDate = itemTask.dueDate != null ? parseISO(itemTask.dueDate) : null;
+					if (
+						itemTask.dueDate != null &&
+						isWithinInterval(dueDate, {
+							start: new Date(),
+							end: addOneMonths,
+						})
+					) {
+						return itemTask;
+					}
+				} else if (state == "completed") {
+					if (itemTask.completed == true) {
+						return itemTask;
+					}
+				}
+			}
+		}).length;
+		return count + acc;
+	}, 0);
+
+	taskListGroupTextContainerP2.textContent = availableTaskCount;
 	taskListGroupTextContainer.appendChild(taskListGroupTextContainerP1);
 	taskListGroupTextContainer.appendChild(taskListGroupTextContainerP2);
 	taskListGroup.appendChild(taskListGroupTextContainer);

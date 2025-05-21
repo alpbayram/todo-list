@@ -12,16 +12,15 @@ const Inbox = new Projects("Inbox", true, []);
 const Inbox2 = new Projects("123Inbox", true, []);
 
 export class Todo {
-	constructor(title, note, dueDate, important, stepArray, projectIndex) {
+	constructor(title, note, dueDate, important, stepArray, projectIndex, completed) {
 		this.id = crypto.randomUUID();
 		this.title = title;
 		this.note = note;
 		this.dueDate = dueDate;
 		this.important = important;
 		this.stepArray = stepArray;
-		this.completed = false;		
+		this.completed = completed;
 		this.projectId = Projects.projectList[projectIndex].id;
 		Projects.projectList[projectIndex].tasks.push(this);
 	}
 }
-

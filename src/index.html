@@ -22,7 +22,7 @@
 			</div>
 			<div class="left-bar" data-state="open">
 				<div class="static-list">
-					<div class="inbox list-item menu-button">
+					<div class="inbox list-item menu-button selected">
 						<div class="icon"><img src="images/inbox-svgrepo-com.svg" alt="" /></div>
 						<p>Inbox</p>
 					</div>
@@ -57,7 +57,15 @@
 					<div class="icon">
 						<img src="images/plus-large-svgrepo-com.svg" alt="" />
 					</div>
-					<input type="text" class="new-project-input" placeholder="New Input" />
+					<input
+						pattern="^(?!\s+$)[A-Za-z0-9ÇÖÜĞŞİçöüğşı ]{3,12}$"
+						title="3–12 karakter arası, sadece harf, rakam ve boşluk; boşlukla dolu olamaz"
+						type="text"
+						class="new-project-input"
+						placeholder="New Input"
+						required
+						maxlength="12"
+					/>
 				</div>
 				<div class="hide-left">
 					<button class="hide-left-button">
@@ -78,11 +86,22 @@
 						<div class="icon">
 							<img src="images/unchecked.svg" alt="" />
 						</div>
-						<input type="text" class="add-a-task-input" placeholder="Add a task" />
+						<input
+							type="text"
+							required
+							autocomplete="off"
+							class="add-a-task-input"
+							placeholder="Add a task"
+							pattern="^(?!\s+$)[A-Za-z0-9ÇÖÜĞŞİçöüğşı ]{3,75}$"
+							title="3–75 karakter arası, sadece harf, rakam ve boşluk; boşlukla dolu olamaz"
+							maxlength="75"
+						/>
 					</div>
 					<div class="add-a-task-submit-wrapper">
 						<div class="icon">
-							<input class="date-input" type="date" />
+							<img src="images/date-range.svg" alt="" />
+							<input class="date-input" autocomplete="off" type="date" required />
+							<p></p>
 						</div>
 						<button class="add-a-task-button">Add</button>
 					</div>
