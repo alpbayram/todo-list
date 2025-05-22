@@ -2,6 +2,7 @@ import "../styles/style.css";
 import "../styles/reset.css";
 import "../styles/fonts.css";
 import "../styles/leftbar.css";
+import "../styles/rightbar.css";
 import "../styles/header.css";
 import "../styles/content.css";
 import checked from "../images/checked.svg";
@@ -14,6 +15,7 @@ import {
 	renderListGroup,
 } from "./inbox.js";
 import { renderProjectList, renderProjectListItem } from "./leftbar.js";
+import { toggleRightBar } from "./helper.js";
 
 ("./inbox.js");
 renderProjectTasks(Projects.projectList[0].id);
@@ -83,7 +85,7 @@ function domControl(event) {
 			} else {
 				new Todo(inputText.value, null, dateInputValue, true, [], projectIndex, false);
 				// renderListItem(Projects.projectList[projectIndex].tasks.at(-1));
-				renderListGroup(Projects.projectList[projectIndex],dataViewState)
+				renderListGroup(Projects.projectList[projectIndex], dataViewState);
 				inputText.value = "";
 				dateInput.value = "";
 				dateInputP.textContent = "";
@@ -104,7 +106,7 @@ function domControl(event) {
 			} else {
 				new Todo(inputText.value, null, dateInputValue, false, [], projectIndex, false);
 				// renderListItem(Projects.projectList[projectIndex].tasks.at(-1));
-				renderListGroup(Projects.projectList[projectIndex],dataViewState)
+				renderListGroup(Projects.projectList[projectIndex], dataViewState);
 				inputText.value = "";
 				dateInput.value = "";
 				dateInputP.textContent = "";
@@ -115,7 +117,7 @@ function domControl(event) {
 			} else {
 				new Todo(inputText.value, null, dateInputValue, false, [], projectIndex, true);
 				// renderListItem(Projects.projectList[projectIndex].tasks.at(-1));
-				renderListGroup(Projects.projectList[projectIndex],dataViewState)
+				renderListGroup(Projects.projectList[projectIndex], dataViewState);
 				inputText.value = "";
 				dateInput.value = "";
 				dateInputP.textContent = "";
@@ -215,6 +217,8 @@ function domControl(event) {
 		console.log(dateIcon);
 
 		dateInput.showPicker();
+	} else if (event.target.matches(".hide-right-button")) {
+		toggleRightBar();
 	}
 }
 const dateInput = document.querySelector(".date-input");

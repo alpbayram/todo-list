@@ -227,8 +227,7 @@ export function renderListGroup(groupItem, state) {
 		const count = projectItem.tasks.filter(function (itemTask) {
 			if (groupItem.id == projectItem.id) {
 				if (state == "important") {
-					if (itemTask.important == true) {
-						console.log("deneme41");
+					if (itemTask.important == true) {						
 						return itemTask;
 					}
 				} else if (state == "upcoming") {
@@ -259,6 +258,7 @@ export function renderListGroup(groupItem, state) {
 	taskListGroup.appendChild(taskListGroupTextContainer);
 	content.appendChild(taskListGroup);
 }
+
 export function renderListItem(listItem) {
 	console.log("buraya giriyor mu");
 	const projectIndex = Projects.projectList.findIndex(function (item) {

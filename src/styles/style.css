@@ -8,7 +8,9 @@ body {
 	display: grid;
 	width: 100vw;
 	height: 100svh;
-	grid-template-columns: 5rem 5fr 1fr;
+	--left-col: min(18rem,100%);
+	--right-col: min(18rem,100%);
+	grid-template-columns: var(--left-col) 1fr var(--right-col);
 	grid-template-rows: 50px 1fr;
 	overflow: hidden; 
 	& > div{

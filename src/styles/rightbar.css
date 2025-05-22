@@ -1,0 +1,68 @@
+.grid-container:has(.right-bar[data-state="open"]) {
+	--right-col: min(18rem, 100%);
+	& .hide-right-button:active img {
+		transform: translateY(4px) rotate(180deg);
+	}
+	& .hide-right-button img {
+		transform: rotate(180deg);
+	}
+}
+.grid-container:has(.right-bar[data-state="close"]) {
+	--right-col: min(0rem, 100%);
+	& .hide-right-button:active img {
+		transform: translateY(4px);
+	}
+}
+.right-bar {
+	display: flex;
+	flex-direction: column;
+}
+.setting-body {
+    flex-grow: 1;
+    overflow: auto;
+}
+.setting-footer {
+    padding: 0.5rem;
+	display: flex;
+	margin-top: auto;
+    align-items: center;
+    justify-content: space-between;
+
+	& .hide-right {
+		margin-top: auto;
+		display: flex;
+
+		
+		& .hide-right-button {
+			background-color: transparent;
+			height: 1.5rem;
+			display: flex;
+			border: none;
+			padding: 0;
+
+			width: 1.5rem;
+
+			& img {
+				max-width: 100%;
+				max-height: 100%;
+				pointer-events: none;
+				height: min-content;
+			}
+		}
+	}
+    & .created-date{
+        color: white;
+    }
+	& .delete {
+		
+		& .icon {
+			height: 1.5rem;
+			& img {
+				max-width: 100%;
+				max-height: 100%;
+				pointer-events: none;
+				height: min-content;
+			}
+		}
+	}
+}

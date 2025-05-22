@@ -1,5 +1,5 @@
 .grid-container:has(.left-bar[data-state="open"]) {
-	grid-template-columns: min(18rem, 100%) 5fr 1fr;
+	--left-col: min(18rem, 100%);
 
 	& .hide-left-button:active img {
 		transform: translateY(4px);
@@ -10,8 +10,7 @@
 }
 
 .grid-container:has(.left-bar[data-state="close"]) {
-	grid-template-columns: min(5rem, 100%) 5fr 1fr;
-
+	--left-col: min(5rem, 100%);
 	& .hide-left-button:active img {
 		transform: translateY(4px) rotate(180deg);
 	}
@@ -84,13 +83,12 @@
 	position: relative;
 	margin-top: 18px;
 	overflow: scroll;
-	
 }
 .list-item {
 	padding: 12px 24px;
 	display: flex;
 	font-size: 1rem;
-	&:not(.new-list) > *{
+	&:not(.new-list) > * {
 		pointer-events: none;
 	}
 	& .icon {
@@ -138,8 +136,8 @@
 		&::placeholder {
 			color: #78bafd;
 		}
-		&:focus::placeholder{
-			color: #797775 ;
+		&:focus::placeholder {
+			color: #797775;
 		}
 	}
 }
