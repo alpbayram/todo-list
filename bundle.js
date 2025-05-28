@@ -479,6 +479,29 @@ export {};`, "",{"version":3,"sources":["webpack://./src/styles/header.css"],"na
 
 /***/ }),
 
+/***/ 950:
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   A: () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(354);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(314);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
+// Imports
+
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, `// extracted by mini-css-extract-plugin
+export {};`, "",{"version":3,"sources":["webpack://./src/styles/rightbar.css"],"names":[],"mappings":"AAAA;QACS,CAAA","sourcesContent":["// extracted by mini-css-extract-plugin\nexport {};"],"sourceRoot":""}]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
 /***/ 978:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
@@ -735,6 +758,35 @@ var leftbar_update = injectStylesIntoStyleTag_default()(leftbar/* default */.A, 
 
        /* harmony default export */ const styles_leftbar = (leftbar/* default */.A && leftbar/* default */.A.locals ? leftbar/* default */.A.locals : undefined);
 
+// EXTERNAL MODULE: ./node_modules/css-loader/dist/cjs.js!./node_modules/mini-css-extract-plugin/dist/loader.js!./node_modules/css-loader/dist/cjs.js!./src/styles/rightbar.css
+var rightbar = __webpack_require__(950);
+;// ./src/styles/rightbar.css
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+var rightbar_options = {};
+
+rightbar_options.styleTagTransform = (styleTagTransform_default());
+rightbar_options.setAttributes = (setAttributesWithoutAttributes_default());
+rightbar_options.insert = insertBySelector_default().bind(null, "head");
+rightbar_options.domAPI = (styleDomAPI_default());
+rightbar_options.insertStyleElement = (insertStyleElement_default());
+
+var rightbar_update = injectStylesIntoStyleTag_default()(rightbar/* default */.A, rightbar_options);
+
+
+
+
+       /* harmony default export */ const styles_rightbar = (rightbar/* default */.A && rightbar/* default */.A.locals ? rightbar/* default */.A.locals : undefined);
+
 // EXTERNAL MODULE: ./node_modules/css-loader/dist/cjs.js!./node_modules/mini-css-extract-plugin/dist/loader.js!./node_modules/css-loader/dist/cjs.js!./src/styles/header.css
 var header = __webpack_require__(916);
 ;// ./src/styles/header.css
@@ -810,19 +862,18 @@ const Inbox = new Projects("Inbox", true, []);
 const Inbox2 = new Projects("123Inbox", true, []);
 
 class Todo {
-	constructor(title, note, dueDate, important, stepArray, projectIndex) {
+	constructor(title, note, dueDate, important, stepArray, projectIndex, completed) {
 		this.id = crypto.randomUUID();
 		this.title = title;
 		this.note = note;
 		this.dueDate = dueDate;
 		this.important = important;
 		this.stepArray = stepArray;
-		this.completed = false;		
+		this.completed = completed;
 		this.projectId = Projects.projectList[projectIndex].id;
 		Projects.projectList[projectIndex].tasks.push(this);
 	}
 }
-
 
 ;// ./src/images/header-inbox.svg
 const header_inbox_namespaceObject = __webpack_require__.p + "images/header-inbox.7aa75672d4393c97bb5f.svg";
@@ -1993,7 +2044,7 @@ function renderProjectTasks(projectId) {
 	const today = formatISO(new Date(), { representation: "date" });
 	const dateInput = document.querySelector(".date-input");
 	dateInput.setAttribute("min", today);
-
+	dateInput.removeAttribute("max");
 	while (content.firstChild) {
 		content.removeChild(content.firstChild);
 	}
@@ -2010,20 +2061,24 @@ function renderSortedProjects(projectId, state) {
 	const content = document.querySelector(".content");
 	const headerIconImg = contentHeader.querySelector("img");
 	const headerText = contentHeader.querySelector("p");
-
+	const dateInput = document.querySelector(".date-input");
 	if (state == "important") {
 		headerIconImg.setAttribute("src", header_important_namespaceObject);
 		headerText.textContent = "Important";
+		dateInput.removeAttribute("max");
 	} else if (state == "upcoming") {
 		headerIconImg.setAttribute("src", header_calendar_namespaceObject);
 		headerText.textContent = "Upcoming";
+		const addOneMonths = formatISO(addMonths(new Date(), 1), { representation: "date" });
+		dateInput.setAttribute("max", addOneMonths);
 	} else if (state == "completed") {
 		headerIconImg.setAttribute("src", header_completed_namespaceObject);
 		headerText.textContent = "Completed";
+		dateInput.removeAttribute("max");
 	}
 
 	const today = formatISO(new Date(), { representation: "date" });
-	const dateInput = document.querySelector(".date-input");
+
 	dateInput.setAttribute("min", today);
 
 	while (content.firstChild) {
@@ -2057,36 +2112,104 @@ function renderSortedProjects(projectId, state) {
 			}
 		});
 		if (isAvailable) {
-			renderListGroup(itemProject);
+			renderListGroup(itemProject, state);
 		}
 	});
 }
-function renderGroupProjectTasks(projectId, state) {
-	
+function renderGroupProjectTasks(projectId, state, collapsed, loaded) {
 	Projects.projectList.forEach((itemProject) => {
 		itemProject.tasks.forEach((itemTask) => {
 			if (state == "important") {
-				
-				if (itemTask.important == true && projectId == itemProject.id) {
+				if (
+					itemTask.important == true &&
+					projectId == itemProject.id &&
+					collapsed == false &&
+					loaded == false
+				) {
 					renderListItem(itemTask);
+				} else if (
+					itemTask.important == true &&
+					projectId == itemProject.id &&
+					loaded == true &&
+					collapsed == true
+				) {
+					const element = document.querySelector(`[data-list-id="${itemTask.id}"]`);
+					console.log(element);
+					element.style.display = "none";
+				} else if (
+					itemTask.important == true &&
+					projectId == itemProject.id &&
+					loaded == true &&
+					collapsed == false
+				) {
+					const element = document.querySelector(`[data-list-id="${itemTask.id}"]`);
+					element.style.display = "flex";
 				}
 			} else if (state == "upcoming") {
 				const addOneMonths = addMonths(new Date(), 1);
-
-				if (itemTask.dueDate != null && projectId == itemProject.id) {
-					const dueDate = parseISO(itemTask.dueDate);
-					if (
-						isWithinInterval(dueDate, {
-							start: new Date(),
-							end: addOneMonths,
-						})
-					) {
-						renderListItem(itemTask);
-					}
+				const dueDate = itemTask.dueDate != null ? parseISO(itemTask.dueDate) : null;
+				if (
+					itemTask.dueDate != null &&
+					projectId == itemProject.id &&
+					isWithinInterval(dueDate, {
+						start: new Date(),
+						end: addOneMonths,
+					}) &&
+					loaded == false &&
+					collapsed == false
+				) {
+					renderListItem(itemTask);
+				} else if (
+					itemTask.dueDate != null &&
+					projectId == itemProject.id &&
+					isWithinInterval(dueDate, {
+						start: new Date(),
+						end: addOneMonths,
+					}) &&
+					loaded == true &&
+					collapsed == true
+				) {
+					const element = document.querySelector(`[data-list-id="${itemTask.id}"]`);
+					console.log(element);
+					element.style.display = "none";
+				} else if (
+					itemTask.dueDate != null &&
+					projectId == itemProject.id &&
+					isWithinInterval(dueDate, {
+						start: new Date(),
+						end: addOneMonths,
+					}) &&
+					loaded == true &&
+					collapsed == false
+				) {
+					const element = document.querySelector(`[data-list-id="${itemTask.id}"]`);
+					element.style.display = "flex";
 				}
 			} else if (state == "completed") {
-				if (itemTask.completed == true && projectId == itemProject.id) {
+				if (
+					itemTask.completed == true &&
+					projectId == itemProject.id &&
+					loaded == false &&
+					collapsed == false
+				) {
 					renderListItem(itemTask);
+				} else if (
+					itemTask.completed == true &&
+					projectId == itemProject.id &&
+					loaded == true &&
+					collapsed == true
+				) {
+					const element = document.querySelector(`[data-list-id="${itemTask.id}"]`);
+					console.log(element);
+					element.style.display = "none";
+				} else if (
+					itemTask.completed == true &&
+					projectId == itemProject.id &&
+					loaded == true &&
+					collapsed == false
+				) {
+					const element = document.querySelector(`[data-list-id="${itemTask.id}"]`);
+					element.style.display = "flex";
 				}
 			}
 		});
@@ -2111,12 +2234,43 @@ function renderListGroup(groupItem, state) {
 	const taskListGroupTextContainerP2 = document.createElement("p");
 
 	taskListGroupTextContainerP1.textContent = groupItem.title;
-	taskListGroupTextContainerP2.textContent = groupItem.tasks.length;
+
+	const availableTaskCount = Projects.projectList.reduce(function (acc, projectItem) {
+		const count = projectItem.tasks.filter(function (itemTask) {
+			if (groupItem.id == projectItem.id) {
+				if (state == "important") {
+					if (itemTask.important == true) {						
+						return itemTask;
+					}
+				} else if (state == "upcoming") {
+					const addOneMonths = addMonths(new Date(), 1);
+					const dueDate = itemTask.dueDate != null ? parseISO(itemTask.dueDate) : null;
+					if (
+						itemTask.dueDate != null &&
+						isWithinInterval(dueDate, {
+							start: new Date(),
+							end: addOneMonths,
+						})
+					) {
+						return itemTask;
+					}
+				} else if (state == "completed") {
+					if (itemTask.completed == true) {
+						return itemTask;
+					}
+				}
+			}
+		}).length;
+		return count + acc;
+	}, 0);
+
+	taskListGroupTextContainerP2.textContent = availableTaskCount;
 	taskListGroupTextContainer.appendChild(taskListGroupTextContainerP1);
 	taskListGroupTextContainer.appendChild(taskListGroupTextContainerP2);
 	taskListGroup.appendChild(taskListGroupTextContainer);
 	content.appendChild(taskListGroup);
 }
+
 function renderListItem(listItem) {
 	console.log("buraya giriyor mu");
 	const projectIndex = Projects.projectList.findIndex(function (item) {
@@ -2229,7 +2383,16 @@ function renderProjectListItem(listItem) {
 	projectList.appendChild(projectListItem);
 }
 
+;// ./src/scripts/helper.js
+function toggleRightBar() {
+	const rightBar = document.querySelector(".right-bar");
+	rightBar.dataset.state == "open"
+		? (rightBar.dataset.state = "close")
+		: (rightBar.dataset.state = "open");
+}
+
 ;// ./src/scripts/index.js
+
 
 
 
@@ -2254,13 +2417,15 @@ const newInputButton = document.querySelector(".new-list img");
 const newInput = document.querySelector(".new-list input");
 const addATaskInputWrapper = document.querySelector(".add-a-task-input-wrapper");
 const addATaskInput = document.querySelector(".add-a-task-input");
+const newProjectInput = document.querySelector(".new-project-input");
+const dateInputP = document.querySelector(".add-a-task-submit-wrapper p");
 inbox.dataset.id = Projects.projectList[0].id;
 important.dataset.id = Projects.projectList[0].id;
 upcoming.dataset.id = Projects.projectList[0].id;
 completed.dataset.id = Projects.projectList[0].id;
 document.addEventListener("click", domControl);
 document.addEventListener("keyup", domControl);
-
+const dateIcon = document.querySelector(".add-a-task-submit-wrapper img");
 function domControl(event) {
 	console.log(event.target);
 	if (event.target.matches(".hide-left-button")) {
@@ -2297,16 +2462,65 @@ function domControl(event) {
 			}
 		});
 		const dateInput = document.querySelector(".date-input");
-		const dateInputValue = dateInput.value == "" ? null : dateInput.value;
-		const importantState =
-			document.querySelector(".selected").classList.contains("important") == true
-				? true
-				: false;
-		console.log(importantState);
-		new Todo(inputText.value, null, dateInputValue, importantState, [], projectIndex);
-		renderListItem(Projects.projectList[projectIndex].tasks.at(-1));
-		inputText.value = "";
-		dateInput.value = "";
+
+		const dataView = event.target.closest("[data-view]");
+		const dataViewState = dataView ? dataView.dataset.view : null;
+		const dateInputValue = dateInput.value !== "" ? dateInput.value : null;
+
+		if (dataViewState == "important") {
+			if (!inputText.checkValidity()) {
+				inputText.reportValidity();
+			} else {
+				new Todo(inputText.value, null, dateInputValue, true, [], projectIndex, false);
+				// renderListItem(Projects.projectList[projectIndex].tasks.at(-1));
+				renderListGroup(Projects.projectList[projectIndex], dataViewState);
+				inputText.value = "";
+				dateInput.value = "";
+				dateInputP.textContent = "";
+			}
+		} else if (dataViewState == "upcoming") {
+			if (!inputText.checkValidity() || !dateInput.checkValidity()) {
+				if (dateInput.validity.rangeOverflow) {
+					dateInput.setCustomValidity("Bir ay içinde bir tarih seçmelisinz.");
+				} else if (dateInput.validity.rangeUnderflow) {
+					dateInput.setCustomValidity("Gelecek bir tarih seçmelisiniz.");
+				} else if (dateInput.validity.valueMissing) {
+					dateInput.setCustomValidity("Tarih seçmelisiniz.");
+				} else {
+					dateInput.setCustomValidity("");
+				}
+				dateInput.reportValidity();
+				inputText.reportValidity();
+			} else {
+				new Todo(inputText.value, null, dateInputValue, false, [], projectIndex, false);
+				// renderListItem(Projects.projectList[projectIndex].tasks.at(-1));
+				renderListGroup(Projects.projectList[projectIndex], dataViewState);
+				inputText.value = "";
+				dateInput.value = "";
+				dateInputP.textContent = "";
+			}
+		} else if (dataViewState == "completed") {
+			if (!inputText.checkValidity()) {
+				inputText.reportValidity();
+			} else {
+				new Todo(inputText.value, null, dateInputValue, false, [], projectIndex, true);
+				// renderListItem(Projects.projectList[projectIndex].tasks.at(-1));
+				renderListGroup(Projects.projectList[projectIndex], dataViewState);
+				inputText.value = "";
+				dateInput.value = "";
+				dateInputP.textContent = "";
+			}
+		} else {
+			if (!inputText.checkValidity()) {
+				inputText.reportValidity();
+			} else {
+				new Todo(inputText.value, null, dateInputValue, false, [], projectIndex, false);
+				renderListItem(Projects.projectList[projectIndex].tasks.at(-1));
+				inputText.value = "";
+				dateInput.value = "";
+				dateInputP.textContent = "";
+			}
+		}
 	} else if (event.target.matches(".checkbox") || event.target.matches(".important-checkbox")) {
 		const indexes = (function index() {
 			for (const project of Projects.projectList) {
@@ -2351,50 +2565,54 @@ function domControl(event) {
 		) {
 			renderGroupProjectTasks(
 				event.target.closest("[data-id]").dataset.id,
-				event.target.closest("[data-view]").dataset.view
+				event.target.closest("[data-view]").dataset.view,
+				false,
+				false
 			);
-			console.log(event.target.closest("[data-view]").dataset.view);
+
 			event.target.dataset.loaded = "true";
 		} else if (event.target.classList.contains("collapsed")) {
-			const projectIndex = Projects.projectList.findIndex(function (item) {
-				if (item.id == event.target.closest("[data-id]").dataset.id) {
-					// console.log(item);
-					return item;
-				}
-			});
-			Projects.projectList[projectIndex].tasks.forEach(function (item) {
-				const listItem = document.querySelector(`[data-list-id="${item.id}"]`);
-				listItem.style.display = "none";
-			});
+			renderGroupProjectTasks(
+				event.target.closest("[data-id]").dataset.id,
+				event.target.closest("[data-view]").dataset.view,
+				true,
+				true
+			);
 		} else {
-			const projectIndex = Projects.projectList.findIndex(function (item) {
-				if (item.id == event.target.closest("[data-id]").dataset.id) {
-					// console.log(item);
-					return item;
-				}
-			});
-			Projects.projectList[projectIndex].tasks.forEach(function (item) {
-				const listItem = document.querySelector(`[data-list-id="${item.id}"]`);
-				listItem.style.display = "flex";
-			});
+			renderGroupProjectTasks(
+				event.target.closest("[data-id]").dataset.id,
+				event.target.closest("[data-view]").dataset.view,
+				false,
+				true
+			);
 		}
 	} else if (event.target == newInputButton) {
 		newInput.focus();
 	} else if (event.target == addATaskInputWrapper) {
 		addATaskInput.focus();
 	} else if (event.key === "Enter" && event.target.matches(".new-project-input")) {
-		const title = event.target.value;
-		new Projects(title, false, []);
-		event.target.value = "";
-		renderProjectListItem(Projects.projectList.at(-1));
-		console.log(Projects.projectList);
-	}
-}
+		if (!newProjectInput.checkValidity()) {
+			newProjectInput.reportValidity();
+		} else {
+			const title = event.target.value;
+			new Projects(title, false, []);
+			event.target.value = "";
+			renderProjectListItem(Projects.projectList.at(-1));
+			console.log(Projects.projectList);
+		}
+	} else if (event.target == dateIcon) {
+		const dateInput = document.querySelector(".date-input");
+		console.log(dateIcon);
 
-function inputControl(event) {
-	if (event.key === "Enter" && event.target.matches(".new-project-input")) {
+		dateInput.showPicker();
+	} else if (event.target.matches(".hide-right-button")) {
+		toggleRightBar();
 	}
 }
+const dateInput = document.querySelector(".date-input");
+dateInput.addEventListener("change", function () {
+	dateInputP.textContent = dateInput.value;
+});
 console.log(Projects.projectList);
 
 /******/ })()
