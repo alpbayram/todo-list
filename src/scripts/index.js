@@ -13,6 +13,7 @@ import {
 	renderListItem,
 	renderGroupProjectTasks,
 	renderListGroup,
+	UpdateContent,
 } from "./inbox.js";
 import { renderProjectList, renderProjectListItem } from "./leftbar.js";
 import { toggleRightBar } from "./helper.js";
@@ -134,6 +135,9 @@ function domControl(event) {
 			}
 		}
 	} else if (event.target.matches(".checkbox") || event.target.matches(".important-checkbox")) {
+		const dataView = event.target.closest("[data-view]");
+		const dataViewState = dataView ? dataView.dataset.view : null;
+
 		const indexes = (function index() {
 			for (const project of Projects.projectList) {
 				for (const task of project.tasks) {
@@ -152,15 +156,30 @@ function domControl(event) {
 		console.log(event.target.checked);
 		if (event.target.checked && event.target.matches(".checkbox")) {
 			Projects.projectList[indexes.projectIndex].tasks[indexes.taskIndex].completed = true;
+			UpdateContent(
+				Projects.projectList[indexes.projectIndex].tasks[indexes.taskIndex],
+				dataViewState
+			);
 			console.log(Projects.projectList);
 		} else if (!event.target.checked && event.target.matches(".checkbox")) {
 			Projects.projectList[indexes.projectIndex].tasks[indexes.taskIndex].completed = false;
+			UpdateContent(
+				Projects.projectList[indexes.projectIndex].tasks[indexes.taskIndex],
+				dataViewState
+			);
 			console.log(Projects.projectList);
 		} else if (event.target.checked && event.target.matches(".important-checkbox")) {
-			console.log("kontrol kontrol");
 			Projects.projectList[indexes.projectIndex].tasks[indexes.taskIndex].important = true;
+			UpdateContent(
+				Projects.projectList[indexes.projectIndex].tasks[indexes.taskIndex],
+				dataViewState
+			);
 		} else {
 			Projects.projectList[indexes.projectIndex].tasks[indexes.taskIndex].important = false;
+			UpdateContent(
+				Projects.projectList[indexes.projectIndex].tasks[indexes.taskIndex],
+				dataViewState
+			);
 		}
 	} else if (event.target.matches(".new-list")) {
 		console.log("girdi");

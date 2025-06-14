@@ -205,58 +205,78 @@ export function renderGroupProjectTasks(projectId, state, collapsed, loaded) {
 }
 
 export function renderListGroup(groupItem, state) {
-	const content = document.querySelector(".content");
-	const taskListGroup = document.createElement("div");
-	taskListGroup.classList.add("task-list-group", "collapsed");
-	taskListGroup.dataset.loaded = false;
-	taskListGroup.dataset.id = groupItem.id;
-	const taskListGroupIcon = document.createElement("div");
-	taskListGroupIcon.classList.add("icon");
-	taskListGroup.appendChild(taskListGroupIcon);
-	const taskListGroupIconImg = document.createElement("img");
-	taskListGroupIconImg.setAttribute("src", groupIcon);
-	taskListGroupIcon.appendChild(taskListGroupIconImg);
-	const taskListGroupTextContainer = document.createElement("div");
-	taskListGroupTextContainer.classList.add("group-text-container");
-	const taskListGroupTextContainerP1 = document.createElement("p");
-	const taskListGroupTextContainerP2 = document.createElement("p");
+	const isListGroupExist = document.querySelector(`.task-list-group[data-id="${groupItem.id}"]`);
+	const projectIndex = Projects.projectList.findIndex(function (item, index, array) {
+		return item == groupItem;
+	});
+	if (isListGroupExist !== null) {
+		UpdateTaskListGroupIndicator(groupItem.tasks[0], state);
+		if (!isListGroupExist.classList.contains("collapsed")) {
+			renderListItem(Projects.projectList[projectIndex].tasks.at(-1));
+		} else if (isListGroupExist.classList.contains("collapsed")) {
+			if (isListGroupExist.dataset.loaded == "true") {
+				renderListItem(Projects.projectList[projectIndex].tasks.at(-1));
+				const lastItemDisplay = document.querySelector(
+					`[data-list-id="${Projects.projectList[projectIndex].tasks.at(-1).id}"]`
+				);
+				lastItemDisplay.style.display = "none";
+			}
+		}
+	} else {
+		const content = document.querySelector(".content");
+		const taskListGroup = document.createElement("div");
+		taskListGroup.classList.add("task-list-group", "collapsed");
+		taskListGroup.dataset.loaded = false;
+		taskListGroup.dataset.id = groupItem.id;
+		const taskListGroupIcon = document.createElement("div");
+		taskListGroupIcon.classList.add("icon");
+		taskListGroup.appendChild(taskListGroupIcon);
+		const taskListGroupIconImg = document.createElement("img");
+		taskListGroupIconImg.setAttribute("src", groupIcon);
+		taskListGroupIcon.appendChild(taskListGroupIconImg);
+		const taskListGroupTextContainer = document.createElement("div");
+		taskListGroupTextContainer.classList.add("group-text-container");
+		const taskListGroupTextContainerP1 = document.createElement("p");
+		const taskListGroupTextContainerP2 = document.createElement("p");
 
-	taskListGroupTextContainerP1.textContent = groupItem.title;
+		taskListGroupTextContainerP1.textContent = groupItem.title;
 
-	const availableTaskCount = Projects.projectList.reduce(function (acc, projectItem) {
-		const count = projectItem.tasks.filter(function (itemTask) {
-			if (groupItem.id == projectItem.id) {
-				if (state == "important") {
-					if (itemTask.important == true) {						
-						return itemTask;
-					}
-				} else if (state == "upcoming") {
-					const addOneMonths = addMonths(new Date(), 1);
-					const dueDate = itemTask.dueDate != null ? parseISO(itemTask.dueDate) : null;
-					if (
-						itemTask.dueDate != null &&
-						isWithinInterval(dueDate, {
-							start: new Date(),
-							end: addOneMonths,
-						})
-					) {
-						return itemTask;
-					}
-				} else if (state == "completed") {
-					if (itemTask.completed == true) {
-						return itemTask;
+		const availableTaskCount = Projects.projectList.reduce(function (acc, projectItem) {
+			const count = projectItem.tasks.filter(function (itemTask) {
+				if (groupItem.id == projectItem.id) {
+					if (state == "important") {
+						if (itemTask.important == true) {
+							return itemTask;
+						}
+					} else if (state == "upcoming") {
+						const addOneMonths = addMonths(new Date(), 1);
+						const dueDate =
+							itemTask.dueDate != null ? parseISO(itemTask.dueDate) : null;
+						if (
+							itemTask.dueDate != null &&
+							isWithinInterval(dueDate, {
+								start: new Date(),
+								end: addOneMonths,
+							})
+						) {
+							return itemTask;
+						}
+					} else if (state == "completed") {
+						if (itemTask.completed == true) {
+							return itemTask;
+						}
 					}
 				}
-			}
-		}).length;
-		return count + acc;
-	}, 0);
+			}).length;
+			return count + acc;
+		}, 0);
 
-	taskListGroupTextContainerP2.textContent = availableTaskCount;
-	taskListGroupTextContainer.appendChild(taskListGroupTextContainerP1);
-	taskListGroupTextContainer.appendChild(taskListGroupTextContainerP2);
-	taskListGroup.appendChild(taskListGroupTextContainer);
-	content.appendChild(taskListGroup);
+		taskListGroupTextContainerP2.textContent = availableTaskCount;
+		taskListGroupTextContainer.appendChild(taskListGroupTextContainerP1);
+		taskListGroupTextContainer.appendChild(taskListGroupTextContainerP2);
+		taskListGroup.appendChild(taskListGroupTextContainer);
+		content.appendChild(taskListGroup);
+	}
 }
 
 export function renderListItem(listItem) {
@@ -339,5 +359,57 @@ export function renderListItem(listItem) {
 		pushToDom.insertAdjacentElement("afterend", taskListItem);
 	} else {
 		content.appendChild(taskListItem);
+	}
+}
+
+export function UpdateContent(item, state) {
+	if (state == "important" && item.important==false) {
+		document.querySelector(`[data-list-id="${item.id}"]`).remove();
+		UpdateTaskListGroupIndicator(item, state);
+	} else if (state == "upcoming") {
+		
+	} else if (state == "completed" && item.completed==false) {
+		document.querySelector(`[data-list-id="${item.id}"]`).remove();
+		UpdateTaskListGroupIndicator(item, state);
+	} else {
+	}
+}
+export function UpdateTaskListGroupIndicator(item, state) {
+	const groupList = document.querySelector(`.task-list-group[data-id="${item.projectId}"]`);
+	const indicator = document.querySelector(
+		`.task-list-group[data-id="${item.projectId}"] .group-text-container p:nth-child(2)`
+	);
+	const availableTaskCount = Projects.projectList.reduce(function (acc, projectItem) {
+		const count = projectItem.tasks.filter(function (item) {
+			if (groupList.dataset.id == projectItem.id) {
+				if (state == "important") {
+					if (item.important == true) {
+						return true;
+					}
+				} else if (state == "upcoming") {
+					const addOneMonths = addMonths(new Date(), 1);
+					const dueDate = item.dueDate != null ? parseISO(item.dueDate) : null;
+					if (
+						item.dueDate != null &&
+						isWithinInterval(dueDate, {
+							start: new Date(),
+							end: addOneMonths,
+						})
+					) {
+						return true;
+					}
+				} else if (state == "completed") {
+					if (item.completed == true) {
+						return true;
+					}
+				}
+			}
+		}).length;
+		return count + acc;
+	}, 0);
+	if (availableTaskCount == 0) {
+		groupList.remove();
+	} else {
+		indicator.textContent = availableTaskCount;
 	}
 }
