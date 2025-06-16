@@ -192,6 +192,8 @@
 			height: 1.3125rem;
 			position: relative;
 			aspect-ratio: 1;
+		}&.selected{
+			background-color: #3b3a39;
 		}
 	}
 

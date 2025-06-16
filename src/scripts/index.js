@@ -16,6 +16,7 @@ import {
 	UpdateContent,
 } from "./inbox.js";
 import { renderProjectList, renderProjectListItem } from "./leftbar.js";
+import { renderTask } from "./rightbar.js";
 import { toggleRightBar } from "./helper.js";
 
 ("./inbox.js");
@@ -26,6 +27,7 @@ const important = document.querySelector(".important");
 const upcoming = document.querySelector(".upcoming");
 const completed = document.querySelector(".completed");
 const leftBar = document.querySelector(".left-bar");
+const rightBar = document.querySelector(".right-bar");
 const newInputButton = document.querySelector(".new-list img");
 const newInput = document.querySelector(".new-list input");
 const addATaskInputWrapper = document.querySelector(".add-a-task-input-wrapper");
@@ -62,7 +64,6 @@ function domControl(event) {
 			});
 			event.target.classList.add("selected");
 		}
-		console.log(Projects.projectList);
 	} else if (
 		event.target.matches(".add-a-task-button") ||
 		(event.key === "Enter" && event.target.matches(".add-a-task-input"))
@@ -238,6 +239,22 @@ function domControl(event) {
 		dateInput.showPicker();
 	} else if (event.target.matches(".hide-right-button")) {
 		toggleRightBar();
+	} else if (event.target.matches(".task-list-item")) {
+		if (!event.target.classList.contains("selected")) {
+			event.target.classList.add("selected");
+			const allListItem = document.querySelectorAll(".task-list-item");
+			console.log(allListItem);
+			for (const listItem of allListItem) {
+				if (!(listItem == event.target)) {
+					console.log(listItem);
+					listItem.classList.remove("selected");
+				}
+			}
+		}
+		if (rightBar.dataset.state == "close") {
+			toggleRightBar(true);
+			rightBar.dataset.id = event.target.dataset.listId;
+		}
 	}
 }
 const dateInput = document.querySelector(".date-input");
