@@ -16,23 +16,67 @@
 .right-bar {
 	display: flex;
 	flex-direction: column;
+	background-color: #201f1e;
+	font-size: 0.875rem;
 }
 .setting-body {
-    flex-grow: 1;
-    overflow: auto;
+	flex-grow: 1;
+	overflow: auto;
+	padding: 0px 16px 0px 24px;
+
+	& .task {
+		display: flex;
+		border-radius: 6px;
+		margin-top: 16px;
+		padding: 16px;
+		background-color: #252423;
+		& p {
+			color: white;
+			margin-left: 12px;
+		}
+		& .important {
+			margin-left: auto;
+		}
+		& .checkbox {
+			appearance: none;
+			position: absolute;
+			display: flex;
+			width: 100%;
+			height: 100%;
+			cursor: pointer;
+			&:not(:checked) + label {
+				background-image: url("/src/images/unchecked.svg");
+			}
+			&:checked + label {
+				background-image: url("/src/images/checked.svg");
+			}
+			&:not(:checked):hover + label {
+				background-image: url("/src/images/unchecked-hover.svg");
+			}
+		}
+		& .icon {
+			height: 1.3125rem;
+			position: relative;
+			aspect-ratio: 1;
+			& label {
+				display: flex;
+				width: 100%;
+				height: 100%;
+			}
+		}
+	}
 }
 .setting-footer {
-    padding: 0.5rem;
+	padding: 0.5rem;
 	display: flex;
 	margin-top: auto;
-    align-items: center;
-    justify-content: space-between;
+	align-items: center;
+	justify-content: space-between;
 
 	& .hide-right {
 		margin-top: auto;
 		display: flex;
 
-		
 		& .hide-right-button {
 			background-color: transparent;
 			height: 1.5rem;
@@ -50,11 +94,10 @@
 			}
 		}
 	}
-    & .created-date{
-        color: white;
-    }
+	& .created-date {
+		color: white;
+	}
 	& .delete {
-		
 		& .icon {
 			height: 1.5rem;
 			& img {

@@ -143,7 +143,7 @@
 }
 
 @media (max-width: 55rem) {
-	.grid-container:has(.left-bar[data-state="close"]) .left-bar {
+	/* .grid-container:has(.left-bar[data-state="close"]) .left-bar {
 		display: none;
-	}
+	} */
 }

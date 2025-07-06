@@ -9,7 +9,7 @@ export class Projects {
 	}
 }
 const Inbox = new Projects("Inbox", true, []);
-const Inbox2 = new Projects("123Inbox", true, []);
+const Inbox2 = new Projects("Example Folder", true, []);
 
 export class Todo {
 	constructor(title, note, dueDate, important, stepArray, projectIndex, completed) {

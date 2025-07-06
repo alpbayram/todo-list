@@ -103,7 +103,7 @@
 		display: flex;
 		align-items: center;
 		height: calc(80% - 18px);
-		
+
 		& input {
 			background-color: transparent;
 			position: absolute;
@@ -192,7 +192,8 @@
 			height: 1.3125rem;
 			position: relative;
 			aspect-ratio: 1;
-		}&.selected{
+		}
+		&.selected {
 			background-color: #3b3a39;
 		}
 	}
@@ -248,14 +249,13 @@
 		display: flex;
 		margin-left: 12px;
 		pointer-events: none;
-		
+
 		& p:first-child {
 			font-weight: bold;
 		}
 		& p:last-child {
 			margin-left: 8px;
 		}
-		
 	}
 	& .icon {
 		height: 1rem;

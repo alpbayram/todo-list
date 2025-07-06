@@ -14,6 +14,8 @@ import {
 	renderGroupProjectTasks,
 	renderListGroup,
 	UpdateContent,
+	UpdateTaskListItem,
+	UpdateRightBar,
 } from "./inbox.js";
 import { renderProjectList, renderProjectListItem } from "./leftbar.js";
 import { renderTask } from "./rightbar.js";
@@ -155,7 +157,12 @@ function domControl(event) {
 		console.log(indexes);
 
 		console.log(event.target.checked);
+		const contentCheckbox = document.querySelector(".content .checkbox");
+		const rightBarCheckbox = document.querySelector(".right-bar .checkbox");
 		if (event.target.checked && event.target.matches(".checkbox")) {
+			if( event.target == rightBarCheckbox){
+				UpdateTaskListItem()
+			}
 			Projects.projectList[indexes.projectIndex].tasks[indexes.taskIndex].completed = true;
 			UpdateContent(
 				Projects.projectList[indexes.projectIndex].tasks[indexes.taskIndex],
@@ -175,12 +182,14 @@ function domControl(event) {
 				Projects.projectList[indexes.projectIndex].tasks[indexes.taskIndex],
 				dataViewState
 			);
+			console.log(Projects.projectList);
 		} else {
 			Projects.projectList[indexes.projectIndex].tasks[indexes.taskIndex].important = false;
 			UpdateContent(
 				Projects.projectList[indexes.projectIndex].tasks[indexes.taskIndex],
 				dataViewState
 			);
+			console.log(Projects.projectList);
 		}
 	} else if (event.target.matches(".new-list")) {
 		console.log("girdi");
@@ -253,7 +262,7 @@ function domControl(event) {
 		}
 		if (rightBar.dataset.state == "close") {
 			toggleRightBar(true);
-			rightBar.dataset.id = event.target.dataset.listId;
+			rightBar.dataset.listId = event.target.dataset.listId;
 		}
 	}
 }

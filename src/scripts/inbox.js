@@ -361,19 +361,32 @@ export function renderListItem(listItem) {
 		content.appendChild(taskListItem);
 	}
 }
-
+const contentCheckbox = document.querySelector(".content .checkbox");
+const rightBarCheckbox = document.querySelector(".right-bar .checkbox");
 export function UpdateContent(item, state) {
-	if (state == "important" && item.important==false) {
+	if (state == "important" && item.important == false) {
 		document.querySelector(`[data-list-id="${item.id}"]`).remove();
 		UpdateTaskListGroupIndicator(item, state);
 	} else if (state == "upcoming") {
-		
-	} else if (state == "completed" && item.completed==false) {
+	} else if (state == "completed" && item.completed == false) {
 		document.querySelector(`[data-list-id="${item.id}"]`).remove();
 		UpdateTaskListGroupIndicator(item, state);
 	} else {
 	}
 }
+
+export function UpdateTaskListItem(item, state) {
+	if (state == "important" && item.important == false) {
+		document.querySelector(`[data-list-id="${item.id}"]`).remove();
+		UpdateTaskListGroupIndicator(item, state);
+	} else if (state == "upcoming") {
+	} else if (state == "completed" && item.completed == false) {
+		document.querySelector(`[data-list-id="${item.id}"]`).remove();
+		UpdateTaskListGroupIndicator(item, state);
+	} else {
+	}
+}
+export function UpdateRightBar(item, state) {}
 export function UpdateTaskListGroupIndicator(item, state) {
 	const groupList = document.querySelector(`.task-list-group[data-id="${item.projectId}"]`);
 	const indicator = document.querySelector(
