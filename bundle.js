@@ -859,7 +859,7 @@ class Projects {
 	}
 }
 const Inbox = new Projects("Inbox", true, []);
-const Inbox2 = new Projects("123Inbox", true, []);
+const Inbox2 = new Projects("Example Folder", true, []);
 
 class Todo {
 	constructor(title, note, dueDate, important, stepArray, projectIndex, completed) {
@@ -2373,19 +2373,32 @@ function renderListItem(listItem) {
 		content.appendChild(taskListItem);
 	}
 }
-
+const contentCheckbox = document.querySelector(".content .checkbox");
+const rightBarCheckbox = document.querySelector(".right-bar .checkbox");
 function UpdateContent(item, state) {
-	if (state == "important" && item.important==false) {
+	if (state == "important" && item.important == false) {
 		document.querySelector(`[data-list-id="${item.id}"]`).remove();
 		UpdateTaskListGroupIndicator(item, state);
 	} else if (state == "upcoming") {
-		
-	} else if (state == "completed" && item.completed==false) {
+	} else if (state == "completed" && item.completed == false) {
 		document.querySelector(`[data-list-id="${item.id}"]`).remove();
 		UpdateTaskListGroupIndicator(item, state);
 	} else {
 	}
 }
+
+function UpdateTaskListItem(item, state) {
+	if (state == "important" && item.important == false) {
+		document.querySelector(`[data-list-id="${item.id}"]`).remove();
+		UpdateTaskListGroupIndicator(item, state);
+	} else if (state == "upcoming") {
+	} else if (state == "completed" && item.completed == false) {
+		document.querySelector(`[data-list-id="${item.id}"]`).remove();
+		UpdateTaskListGroupIndicator(item, state);
+	} else {
+	}
+}
+function UpdateRightBar(item, state) {}
 function UpdateTaskListGroupIndicator(item, state) {
 	const groupList = document.querySelector(`.task-list-group[data-id="${item.projectId}"]`);
 	const indicator = document.querySelector(
@@ -2456,14 +2469,24 @@ function renderProjectListItem(listItem) {
 }
 
 ;// ./src/scripts/helper.js
-function toggleRightBar() {
+function toggleRightBar(state) {
 	const rightBar = document.querySelector(".right-bar");
-	rightBar.dataset.state == "open"
-		? (rightBar.dataset.state = "close")
-		: (rightBar.dataset.state = "open");
+	console.log(state)
+	if (state) {
+		rightBar.dataset.state = "open";
+		console.log("open yapıldı")
+	} else if (state) {
+		rightBar.dataset.state = "close";
+		console.log("close yapıldı")
+	} else if (state === undefined) {
+		rightBar.dataset.state == "open"
+			? (rightBar.dataset.state = "close")
+			: (rightBar.dataset.state = "open");
+	}
 }
 
 ;// ./src/scripts/index.js
+
 
 
 
@@ -2485,6 +2508,7 @@ const important = document.querySelector(".important");
 const upcoming = document.querySelector(".upcoming");
 const completed = document.querySelector(".completed");
 const leftBar = document.querySelector(".left-bar");
+const rightBar = document.querySelector(".right-bar");
 const newInputButton = document.querySelector(".new-list img");
 const newInput = document.querySelector(".new-list input");
 const addATaskInputWrapper = document.querySelector(".add-a-task-input-wrapper");
@@ -2521,7 +2545,6 @@ function domControl(event) {
 			});
 			event.target.classList.add("selected");
 		}
-		console.log(Projects.projectList);
 	} else if (
 		event.target.matches(".add-a-task-button") ||
 		(event.key === "Enter" && event.target.matches(".add-a-task-input"))
@@ -2613,7 +2636,12 @@ function domControl(event) {
 		console.log(indexes);
 
 		console.log(event.target.checked);
+		const contentCheckbox = document.querySelector(".content .checkbox");
+		const rightBarCheckbox = document.querySelector(".right-bar .checkbox");
 		if (event.target.checked && event.target.matches(".checkbox")) {
+			if( event.target == rightBarCheckbox){
+				UpdateTaskListItem()
+			}
 			Projects.projectList[indexes.projectIndex].tasks[indexes.taskIndex].completed = true;
 			UpdateContent(
 				Projects.projectList[indexes.projectIndex].tasks[indexes.taskIndex],
@@ -2633,12 +2661,14 @@ function domControl(event) {
 				Projects.projectList[indexes.projectIndex].tasks[indexes.taskIndex],
 				dataViewState
 			);
+			console.log(Projects.projectList);
 		} else {
 			Projects.projectList[indexes.projectIndex].tasks[indexes.taskIndex].important = false;
 			UpdateContent(
 				Projects.projectList[indexes.projectIndex].tasks[indexes.taskIndex],
 				dataViewState
 			);
+			console.log(Projects.projectList);
 		}
 	} else if (event.target.matches(".new-list")) {
 		console.log("girdi");
@@ -2697,6 +2727,22 @@ function domControl(event) {
 		dateInput.showPicker();
 	} else if (event.target.matches(".hide-right-button")) {
 		toggleRightBar();
+	} else if (event.target.matches(".task-list-item")) {
+		if (!event.target.classList.contains("selected")) {
+			event.target.classList.add("selected");
+			const allListItem = document.querySelectorAll(".task-list-item");
+			console.log(allListItem);
+			for (const listItem of allListItem) {
+				if (!(listItem == event.target)) {
+					console.log(listItem);
+					listItem.classList.remove("selected");
+				}
+			}
+		}
+		if (rightBar.dataset.state == "close") {
+			toggleRightBar(true);
+			rightBar.dataset.listId = event.target.dataset.listId;
+		}
 	}
 }
 const dateInput = document.querySelector(".date-input");
