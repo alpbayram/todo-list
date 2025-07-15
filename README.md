@@ -1,6 +1,6 @@
 ## Canlı Proje Task Management App
 Projenin canlı halini şu adresten görebilirsiniz:  
-[https://github.com/alpbayram/todo-list/](https://github.com/alpbayram/todo-list/)
+[https://alpbayram.github.io/todo-list/](https://alpbayram.github.io/todo-list/)
 
 ## Requirements
 - Node.js ≥14  
