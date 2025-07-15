@@ -1,6 +1,6 @@
-# Template Project
-
-Minimal Webpack starter: development server + production build.
+## Canlı Proje Task Management App
+Projenin canlı halini şu adresten görebilirsiniz:  
+[https://github.com/alpbayram/todo-list/](https://github.com/alpbayram/todo-list/)
 
 ## Requirements
 - Node.js ≥14  
